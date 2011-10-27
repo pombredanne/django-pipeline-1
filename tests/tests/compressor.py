@@ -65,6 +65,10 @@ class CompressorTest(TestCase):
         name = self.compressor.template_name('templates/photo_edit.jst', '')
         self.assertEquals(name, 'photo_edit')
 
+    def test_compile_templates(self):
+        templates = self.compressor.compile_templates(['templates/photo/list.jst'])
+        self.assertEquals(templates, """window.JST = window.JST || {};\nwindow.JST['templates_photo_list'] = _.template('<div class="photo"> <img src="<%= src %>" /> <div class="caption">  <%= caption %> </div></div>');\n""")
+
     def test_embeddable(self):
         self.assertFalse(self.compressor.embeddable('images/sprite.png', None))
         self.assertFalse(self.compressor.embeddable('images/arrow.png', 'datauri'))

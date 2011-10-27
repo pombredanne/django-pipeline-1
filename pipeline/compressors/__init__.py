@@ -94,6 +94,8 @@ class Compressor(object):
         """Find out the name of a JS template"""
         if not base:
             path = os.path.basename(path)
+        if path == base:
+            base = ''
         name = re.sub(r"^%s\/?(.*)%s$" % (
             re.escape(base), re.escape(settings.PIPELINE_TEMPLATE_EXT)
         ), r"\1", path)
