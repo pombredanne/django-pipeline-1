@@ -95,7 +95,7 @@ class Compressor(object):
         if not base:
             path = os.path.basename(path)
         if path == base:
-            base = ''
+            base = os.path.dirname(path)
         name = re.sub(r"^%s\/?(.*)%s$" % (
             re.escape(base), re.escape(settings.PIPELINE_TEMPLATE_EXT)
         ), r"\1", path)
