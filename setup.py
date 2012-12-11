@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
+
 setup(
     name='django-pipeline',
-    version='1.1.21',
+    version='1.2.21',
     description='Pipeline is an asset packaging library for Django.',
-    long_description="""Pipeline is an asset packaging library for Django, providing
-both CSS and JavaScript concatenation and compression, built-in JavaScript
-template support, and optional data-URI image and font embedding.""",
+    long_description=open('README.rst').read() + '\n\n' +
+        open('HISTORY.rst').read(),
     author='Timothée Peignier',
     author_email='timothee.peignier@tryphon.org',
     url='https://github.com/cyberdelia/django-pipeline',
+    license='MIT',
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,

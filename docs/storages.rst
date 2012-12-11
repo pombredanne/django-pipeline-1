@@ -7,8 +7,8 @@ Storages
 Using with a custom storage
 ===========================
 
-Pipeline use `Django Storage <https://docs.djangoproject.com/en/dev/ref/files/storage/>`_
-to read, save and delete files, by default it use an improved ``FileSystemStorage``.
+Pipeline uses `Django Storage <https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#storages>`_
+to read, save and delete files, by default it use an improved ``StaticFilesStorage``.
 
 You can provide your own via ``PIPELINE_STORAGE`` : ::
 
@@ -18,20 +18,45 @@ You can provide your own via ``PIPELINE_STORAGE`` : ::
 Using with staticfiles
 ======================
 
-Pipeline is providing a Finder for `staticfiles app <https://docs.djangoproject.com/en/dev/howto/static-files/>`_,
-to use it configure ``STATICFILES_FINDERS`` like so : ::
+Pipeline is providing a storage for `staticfiles app <https://docs.djangoproject.com/en/dev/howto/static-files/>`_,
+to use it configure ``STATICFILES_STORAGE`` like so ::
 
-  STATICFILES_FINDERS = (
-    'pipeline.finders.PipelineFinder',
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
-  )
+  STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 
+And if you want versioning use ::
 
-.. note::
-	``PipelineFinder`` should be the first finder in ``STATICFILES_FINDERS``.
+  STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
+There is also non-packing storage available, that allows you to run ``collectstatic`` command
+without packaging your assets. Useful for production when you don't want to run compressor or compilers ::
+
+  STATICFILES_STORAGE = 'pipeline.storage.NonPackagingPipelineStorage'
+
+Also available if you want versioning ::
+
+  STATICFILES_STORAGE = 'pipeline.storage.NonPackagingPipelineCachedStorage'
 
 Pipeline is also providing a storage that play nicely with staticfiles app
 particularly for development : ::
 
   PIPELINE_STORAGE = 'pipeline.storage.PipelineFinderStorage'
+
+
+Using with other storages
+=========================
+
+You can also use your own custom storage, for example, if you want to use S3 for your assets : ::
+
+  STATICFILES_STORAGE = 'your.app.S3PipelineStorage'
+
+Your storage only need to inherit from ``PipelineMixin`` and/or ``CachedFilesMixin`` : ::
+
+  from staticfiles.storage import CachedFilesMixin
+
+  from pipeline.storage import PipelineMixin
+
+  from storages.backends.s3boto import S3BotoStorage
+
+
+  class S3PipelineStorage(PipelineMixin, CachedFilesMixin, S3BotoStorage):
+       pass

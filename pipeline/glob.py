@@ -2,7 +2,7 @@ import os
 import re
 import fnmatch
 
-from pipeline.storage import storage
+from pipeline.storage import default_storage
 
 __all__ = ["glob", "iglob"]
 
@@ -23,7 +23,12 @@ def iglob(pathname):
 
     """
     if not has_magic(pathname):
-        yield pathname
+        try:
+            if default_storage.exists(pathname):
+                yield pathname
+        except NotImplementedError:
+            # Being optimistic
+            yield pathname
         return
     dirname, basename = os.path.split(pathname)
     if not dirname:
@@ -49,9 +54,11 @@ def iglob(pathname):
 
 def glob1(dirname, pattern):
     try:
-        directories, files = storage.listdir(dirname)
+        directories, files = default_storage.listdir(dirname)
         names = directories + files
-    except NotImplementedError:
+    except Exception:
+        # We are not sure that dirname is a real directory
+        # and storage implementations are really exotic.
         return []
     if pattern[0] != '.':
         names = filter(lambda x: x[0] != '.', names)
@@ -59,7 +66,7 @@ def glob1(dirname, pattern):
 
 
 def glob0(dirname, basename):
-    if storage.exists(os.path.join(dirname, basename)):
+    if default_storage.exists(os.path.join(dirname, basename)):
         return [basename]
     return []
 

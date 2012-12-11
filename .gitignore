@@ -10,5 +10,11 @@ docs/_build/
 *.egg-info
 .coverage
 coverage/
-tests/static/js/dummy.js
+tests/static/
+tests/assets/js/dummy.js
 .tox/
+.DS_Store
+.idea
+.venv
+.project
+.pydevproject
